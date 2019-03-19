@@ -1,10 +1,9 @@
-
 //封装的中间件函数
 const sha1 = require('sha1');
-const {getUserDataAsync, parseXMLData, formjsData} = require('../utils/tools');
-
+const {getUserDataAsync, parseXMLData, formatJsData} = require('../utils/tools');
+const template = require('./template');
 module.exports = () => {
-     return async (req, res) => {
+    return async (req, res) => {
         //console.log(req.query);
 
         const {signature, echostr, timestamp, nonce} = req.query;
@@ -34,23 +33,30 @@ module.exports = () => {
             const jsData = parseXMLData(xmlData);
 
             //格式化jsData
-            const userData = formjsData(jsData);
+            const userData = formatJsData(jsData);
 
             //实现自动回复
-            let content = '大吉大利，今晚吃鸡！';
-            if (userData.Content === '1') {
-                content = '来对狙啊！爆头的那种！';
-            } else if (userData.Content.indexOf('2') !== -1) {
-                content = '来钢枪啊！\n 倒地的那种！';
+            let options = {
+                toUserName: userData.FromUserName,
+                fromUserName: userData.ToUserName,
+                createTime: Data.now(),
+                type: 'text',
+                content: '大吉大利，今晚吃鸡！'
             }
 
-            let replyMessage = `<xml>
-                  <ToUserName><![CDATA[${userData.FromUserName}]]></ToUserName>
-                  <FromUserName><![CDATA[${userData.ToUserName}]]></FromUserName>
-                  <CreateTime>${Date.now()}</CreateTime>
-                  <MsgType><![CDATA[text]]></MsgType>
-                  <Content><![CDATA[${content}]]></Content>
-                </xml>`
+            if (userData.Content === '1') {
+                options.content = '来对狙啊！爆头的那种！';
+            } else if (userData.Content && userData.Content.indexOf(' 2 ') !== -1) {
+                options.content = '来钢枪啊！\n 倒地的那种！';
+            }
+            if (userData .MsgType === 'image') {
+                //将用户发送的图片返回
+                options.mediaId = userData.MediaId;
+                options.type = 'image';
+            }
+
+            const replyMessage = template(options);
+            console.log(replyMessage);
             //返回响应
             res.send(replyMessage);
 

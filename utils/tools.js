@@ -42,7 +42,7 @@ module.exports = {
     },
 
     //格式化jsData的方法
-    formjsData(jsData){
+    formatJsData(jsData){
         const {xml} = jsData;
         const userData = {};
         for (let key in xml) {
