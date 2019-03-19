@@ -5,14 +5,17 @@ const template = require('./template');
 module.exports = () => {
     return async (req, res) => {
         //console.log(req.query);
-
+        //微信服务器发送过来的请求参数
         const {signature, echostr, timestamp, nonce} = req.query;
         const token = 'dabaiya1128';
 
+        //通过微信签名算法加密出来微信签名
         const sha1Sorted = sha1([token, timestamp, nonce].sort().join(''));
 
         if (req.method === 'GET') {
+            // 处理验证服务器消息有效性
             if (sha1Sorted === signature) {
+                // 说明消息来自于微信服务器
                 res.end(echostr);
             } else {
                 res.end(error);

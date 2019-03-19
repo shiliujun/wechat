@@ -1,5 +1,5 @@
 const express = require('express');
-const  reply=require('./reply');
+const reply = require('./reply');
 const app = express();
 
 //调用中间件封装的函数，调用可以传参(扩展性强）
