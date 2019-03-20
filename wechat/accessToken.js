@@ -1,6 +1,6 @@
 const rp = require('request-promise-native');
 
-const {writeFile} = require('fs');
+const {writeFile, readFile} = require('fs');
 
 //发送请求、获取access_token，保存起来，设置过期时间
 async function getAt() {
@@ -23,4 +23,26 @@ async function getAt() {
     return result;
 }
 
-getAt();
+// 得到最终有效的access_token
+module.exports = function fetchAt() {
+    return new Promise((resolve, reject) => {
+        readFile('./assessToken.text', (err, data) => {
+            if (!err) {
+                resolve(JSON.parse(data.toString()));
+            } else {
+                reject(err);
+            }
+        })
+    })
+        .then(res => {
+            if (res.expires_in < Date.now()) {
+                return getAt();
+            } else {
+                return res;
+            }
+        })
+        .catch(err => {
+            return getAt();
+        })
+
+}
