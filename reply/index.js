@@ -1,7 +1,10 @@
-//封装的中间件函数
+//封装的中间件函数模块：接受请求，返回响应
+
 const sha1 = require('sha1');
 const {getUserDataAsync, parseXMLData, formatJsData} = require('../utils/tools');
 const template = require('./template');
+const handleResponse = require('./handleResponse');
+
 module.exports = () => {
     return async (req, res) => {
         //console.log(req.query);
@@ -15,17 +18,16 @@ module.exports = () => {
         if (req.method === 'GET') {
             // 处理验证服务器消息有效性
             if (sha1Sorted === signature) {
-                // 说明消息来自于微信服务器
+                //说明消息来自于微信服务器
                 res.end(echostr);
             } else {
-                res.end(error);
+                //说明消息不是微信服务器
+                res.end('error');
             }
         } else if (req.method === 'POST') {
-            //console.log(req.body);{}
-
             //过滤掉不是微信服务器发送的消息
             if (sha1Sorted !== signature) {
-                res, end('error');
+                res.end('error');
                 return;
             }
 
@@ -38,29 +40,14 @@ module.exports = () => {
             //格式化jsData
             const userData = formatJsData(jsData);
 
-            //实现自动回复
-            let options = {
-                toUserName: userData.FromUserName,
-                fromUserName: userData.ToUserName,
-                createTime: Date.now(),
-                type: 'text',
-                content: '大吉大利，今晚吃鸡！'
-            }
+            //实现自动回复,处理用户发送的请求，定义响应的数据
+            const options = handleResponse(userData);
 
-            if (userData.Content === '1') {
-                options.content = '来对狙啊！爆头的那种！';
-            } else if (userData.Content && userData.Content.indexOf('2') !== -1) {
-                console.log(userData.Content)
-                options.content = '来钢枪啊！\n 倒地的那种！';
-            }
-            if (userData.MsgType === 'image') {
-                //将用户发送的图片返回
-                options.mediaId = userData.MediaId;
-                options.type = 'image';
-            }
-
+            // 用于定义回复用户消息的6种模板模块
             const replyMessage = template(options);
-             console.log(replyMessage);
+
+            // 如果响应错误， 看打印结果是否错误,再看是哪个模板出现了问题
+            console.log(replyMessage);
             //返回响应
             res.send(replyMessage);
 
