@@ -6,14 +6,13 @@ module.exports = (options) => {
               <FromUserName><![CDATA[${options.fromUserName}]]></FromUserName>
               <CreateTime>${options.createTime}</CreateTime>
               <MsgType><![CDATA[${options.type}]]></MsgType>`;
+
     if (options.type === 'text') {
-        replyMessage += `<Content><![CDATA [${options.content}]]></Content>
-        </xml>`
+        replyMessage += `<Content><![CDATA [${options.content}]]></Content>`
     } else if (options.type === 'image') {
-        replyMessage += `<MsgType><![CDATA[image]]></MsgType>
-              <Image>
+        replyMessage += ` <Image>
                 <MediaId><![CDATA[${options.mediaId}]]></MediaId>
-              </Image>`
+                </Image> `
     } else if (options.type === 'voice') {
         replyMessage += ` <Voice>
             <MediaId><![CDATA[${options.mediaId}]]></MediaId>

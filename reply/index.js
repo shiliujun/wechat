@@ -42,7 +42,7 @@ module.exports = () => {
             let options = {
                 toUserName: userData.FromUserName,
                 fromUserName: userData.ToUserName,
-                createTime: Data.now(),
+                createTime: Date.now(),
                 type: 'text',
                 content: '大吉大利，今晚吃鸡！'
             }
