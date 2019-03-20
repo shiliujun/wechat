@@ -49,17 +49,18 @@ module.exports = () => {
 
             if (userData.Content === '1') {
                 options.content = '来对狙啊！爆头的那种！';
-            } else if (userData.Content && userData.Content.indexOf(' 2 ') !== -1) {
+            } else if (userData.Content && userData.Content.indexOf('2') !== -1) {
+                console.log(userData.Content)
                 options.content = '来钢枪啊！\n 倒地的那种！';
             }
-            if (userData .MsgType === 'image') {
+            if (userData.MsgType === 'image') {
                 //将用户发送的图片返回
                 options.mediaId = userData.MediaId;
                 options.type = 'image';
             }
 
             const replyMessage = template(options);
-            console.log(replyMessage);
+             console.log(replyMessage);
             //返回响应
             res.send(replyMessage);
 
