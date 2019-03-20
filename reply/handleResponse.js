@@ -18,6 +18,7 @@ module.exports = (userData) => {
     } else if (userData.MsgType === 'voice') {
         //将用户发送的语音消息， 返回语音识别结果给用户（需要开通才能生效）
         options.content = userData.Recognition;
+
     } else if (userData.MsgType === 'location') {
         //用户发送的是地理位置信息
         options.content = `地理位置纬度：${userData.Location_X} 
