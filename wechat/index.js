@@ -1,55 +1,78 @@
-/*定义获取access_token的模块*/
+/*实现微信公众号提供的各个接口*/
 const rp = require('request-promise-native');
-const {writeFile, readFile} = require('fs');
+const fetchAccessToken = require('./accessToken');
 
-async function getAccessToken() {
+const menu = {
+    "button": [
+        {
+            "type": "click",
+            "name": "贵在坚持💰",
+            "key": "贵在坚持"
+        },
+        {
+            "name": "难在坚持🔥",
+            "sub_button": [
+                {
+                    "type": "view",
+                    "name": "网恋选我📳",
+                    "url": "https://music.163.com/"
+                },
+                {
+                    "type": "click",
+                    "name": "我最甜🍰",
+                    "key": "我最甜"
+                }
 
-    const appId = 'wxe4c8a7b61d8bec3a';
-    const appSecret = '787e8a6947d46bd0542fa73892dc04b4';
-    //定义请求地址
-    const url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appId}&secret=${appSecret}`;
+            ]
+        },
+        {
+            "name": "成在坚持✈",
+            "sub_button": [
+                {
+                    "type": "view",
+                    "name": "又骗感情又骗钱🍹",
+                    "url": "https://www.zhihu.com/"
+                },
+                {
+                    "type": "scancode_waitmsg",
+                    "name": "扫码送店🎉",
+                    "key": "扫码送店！",
+                },
+                {
+                    "type": "scancode_push",
+                    "name": "扫码领千万红包💄",
+                    "key": "扫码领千万红包！",
+                },
+                {
+                    "type": "pic_photo_or_album",
+                    "name": "仙女下凡啦👸",
+                    "key": "仙女下凡啦！",
+                },
+                {
+                    "type": "pic_weixin",
+                    "name": "天生丽质🌑",
+                    "key": "天生丽质！",
+                }]
+        }]
+}
 
-    //发送请求
-    const result = await rp({method: 'GET', url, json: true});
-    //设置过期时间
-    result.expires_in = Date.now() + 7200000 - 300000;
-
-    //保存下来
-    writeFile('./accessToken.txt', JSON.stringify(result), err => {
-        if (!err) console.log('文件保存成功了~~');
-        else console.log(err);
-    })
-
-    //返回获取好的access_token
+async function createMenu() {
+    const {access_token} = await fetchAccessToken();
+    const url = ` https://api.weixin.qq.com/cgi-bin/menu/create?access_token=${access_token}`;
+    const result = await rp({method: 'POST', url, json: true, body: menu});
     return result;
 }
 
-//定义最终得到的access_token的函数
-function fetchAccessToken() {
-    return new Promise((resolve, reject) => {
-        readFile('accessToken.txt', (err, data) => {
-            if (!err) {
-                resolve(JSON.parse(data.toString()));
-            } else {
-                reject(err);
-            }
-        })
-    })
-        .then((res) => {
-            if (res.expires_in < Date.now()) {
-                return getAccessToken();
-            } else {
-                return res;
-            }
-        })
-        .catch(err => {
-            return getAccessToken();
-        })
-
+async function deleteMenu() {
+    const {access_token} = await fetchAccessToken();
+    const url = ` https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=${access_token}`;
+    const result = await rp({method: 'GET', url, json: true});
+    return result;
 }
 
-/*(async () => {
-    const result = await fetchAccessToken();
+(async () => {
+    let result = await deleteMenu();
     console.log(result);
-})()*/
-
+    result = await createMenu();
+    console.log(result);
+})()
