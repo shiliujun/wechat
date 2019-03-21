@@ -62,4 +62,60 @@
   * 接受普通消息 https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140453
   * 接受事件消息 https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140454
 
+## 6、获取access_token
+* 接口
+  * 简单来讲：就是一个url地址  http://localhost:3000/login
+  * 完整包含：
+    * 请求方式
+    * 请求参数
+    * 请求地址
+    * 请求头/cookie
+    * 响应信息
+    * ....
+* 定义获取access_token的模块
+  * 封装了getAccessToken函数
+    * 定义请求地址：三个参数，其中appID、appsecret填写自己页面的，grant_type=client_credential这个值是固定不变的
+    * 发送请求，使用的request request-promise-native
+    * 设置过期时间 2小时更新，需要提前5分钟刷新
+    * 保存为一个本地文件（只能保存字符串数据，将js对象转换为json字符串）fs.writeFile
+    * 将获取的access_token数据返回出去
+  * 封装了fetchAccessToken函数
+    * 读取本地accessToken.txt文件 fs.readFile
+    * 如果有判断是否过期，没有过期就直接使用，过期了就调用getAccessToken函数
+    * 如果没有就直接调用getAccessToken函数
+  * 注意promise对象返回值问题
+    * return 返回值看整体表达式的返回值
+    * promise对象表达式返回值就是then / catch函数的返回值
+    * then / catch函数的返回值看内部箭头函数的返回值
+
+## 7、自定义菜单
+* 创建菜单
+  * 获取access_token
+  * 定义请求地址
+    * POST请求需要携带body参数
+  * 发送请求
+  * 返回响应结果
+* 删除菜单
+  * 获取access_token
+  * 定义请求地址
+  * 发送请求
+  * 返回响应结果
+* 总结：实现接口的函数定义的规则
+  * 获取access_token
+  * 定义请求地址
+    * 注意请求参数问题
+  * 发送请求
+  * 返回响应结果
+
+## 常见问题总结
+* 问题描述：该公众号提供的服务出现故障，请稍后再试
+* 问题原因以及解决办法：
+  * 没有返回合法的 xml数据 或者 '' 给微信服务器
+    * 如果还在开发测试阶段（自动回复功能还没写完） res.end('');
+    * 如果开发完成还不行，说明回复了非法数据，检查replyMessage的值，看是否有undefined或者回复的xml格式不正确，修改好。
+  * ngrok服务器出现故障（红色 restart...），导致不到请求也返回不了响应
+    * 重启ngrok, 修改测试接口号网址，重新提交、测试
+
+
+
 
