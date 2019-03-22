@@ -1,9 +1,11 @@
 /*工具函数模块*/
 const {parseString} = require('xml2js');
+const {writeFile, readFile} = require('fs');
+const {resolve} = require('path');
 
 module.exports = {
-     //获取用户发送的消息
-     getUserDataAsync(req) {
+    //获取用户发送的消息
+    getUserDataAsync(req) {
         return new Promise((resolve, reject) => {
             let xmlData = '';
             req
@@ -28,7 +30,7 @@ module.exports = {
     },
 
     //讲xml数据转换成js对象
-    parseXMLData(xmlData){
+    parseXMLData(xmlData) {
         let jsData = null;
         //字符串首尾去空格{trim:true}
         parseString(xmlData, {trim: true}, (err, result) => {
@@ -42,7 +44,7 @@ module.exports = {
     },
 
     //格式化jsData的方法
-    formatJsData(jsData){
+    formatJsData(jsData) {
         const {xml} = jsData;
         const userData = {};
         for (let key in xml) {
@@ -52,7 +54,32 @@ module.exports = {
             userData[key] = value[0];
         }
         return userData;
+    },
+
+    //token，ticket中的readFile,writeFile方法
+    writeFileAsync(filePath, data) {
+        //设置成绝对路径
+        filePath=resolve(__dirname,'../wechat',filePath);
+        return new Promise((resolve, reject) => {
+            writeFile(filePath, JSON.stringify(data), err => {
+                if (!err) resolve();
+                else reject(err);
+            })
+        })
+    },
+
+    readFileAsync(filePath) {
+        filePath=resolve(__dirname,'../wechat',filePath);
+        return new Promise((resolve, reject) => {
+            readFile(filePath, (err, data) => {
+                if (!err) {
+                    resolve(JSON.parse(data.toString()));
+                } else {
+                    reject(err);
+                }
+            })
+        })
+
+
     }
-
-
 }

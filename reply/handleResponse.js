@@ -40,6 +40,9 @@ module.exports = (userData) => {
         } else if (userData.Event === 'CLICK') {
             // 用户点击菜单
             options.content = '用户点击了菜单~';
+            if (userData.EventKey === '贵在坚持💰') {
+                options.content = '用户点击了贵在坚持💰';
+            }
         }
     }
 
