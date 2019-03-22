@@ -14,6 +14,8 @@ module.exports = (userData) => {
         } else if (userData.Content && userData.Content.indexOf('2') !== -1) {
             console.log(userData.Content)
             options.content = '来钢枪啊！\n 倒地的那种！';
+        } else if (userData.Content==='3') {
+            options.content ='<a herf="http://56c65a63.ngrok.io/search">语音识别</a>';
         }
     } else if (userData.MsgType === 'voice') {
         //将用户发送的语音消息， 返回语音识别结果给用户（需要开通才能生效）

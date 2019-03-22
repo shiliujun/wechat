@@ -16,7 +16,6 @@ async function getJsapiTicket() {
         ticket: result.ticket,
         expires_in: result.expires_in
     }
-
     //保存下来
     await writeFileAsync('./jsapiTicket.txt', ticket);
     return result;
@@ -38,9 +37,9 @@ function fetchJsapiTicket() {
 
 }
 
-(async () => {
+/*(async () => {
     const result = await fetchJsapiTicket();
     console.log(result);
-})()
+})()*/
 
 module.exports = fetchJsapiTicket;
