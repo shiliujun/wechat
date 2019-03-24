@@ -6,7 +6,8 @@
     <meta name="viewport" content="initial-scale=1,user-scalable=no,max-scale=1,width=device-width">
 </head>
 <body>
-<button id="byn">点击录音</button>
+<button id="btn">点击录音</button>
+<ul id="list"></ul>
 </body>
 <script type="text/javascript" src="http://res2.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
 <script src="https://cdn.bootcss.com/zepto/1.0rc1/zepto.min.js"></script>
@@ -14,7 +15,7 @@
     $(function () {
         wx.config({
             debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-            appId: 'wxe4c8a7b61d8bec3a', // 必填，公众号的唯一标识
+            appId: '<%= appId %>', // 必填，公众号的唯一标识
             timestamp: '<%= timestamp %>', // 必填，生成签名的时间戳
             nonceStr: '<%= noncestr %>', // 必填，生成签名的随机串
             signature: '<%= signature %>',// 必填，签名
@@ -28,10 +29,7 @@
         });
 
         wx.ready(function () {
-            // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，
-            // config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，
-            // 则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，
-            // 则可以直接调用，不需要放在ready函数中。
+
         });
 
         let isRecord = false;
@@ -41,11 +39,25 @@
                 wx.stopRecord({
                     success: function (res) {
                         var localId = res.localId;
+                        //翻译语音
                         wx.translateVoice({
                             localId: 'localId', // 需要识别的音频的本地Id，由录音相关接口获得
                             isShowProgressTips: 1, // 默认为1，显示进度提示
                             success: function (res) {
                                 alert(res.translateResult); // 语音识别的结果
+                                //请求豆瓣数据，存在跨域
+                                $.getJSON('https://api.douban.com/v2/movie/search?q=${res.translateResult}&count=10&callback=?', function () {
+                                    console.log(data);
+                                    const {subjects} = data;
+                                    const html = subjects.reduce((prev, curr) => {
+                                        return prev + `<li>
+                                            <img src="${curr.images.small}" alt="${curr.title}">
+                                            <a href="${curr.alt}">${curr.title}</a>
+                                            <p>电影评分：${curr.rating.average}</p>
+                                            </li>`
+                                    }, '')
+                                    $('#list').html(html);
+                                })
                             }
                         });
                         isRecord = false;

@@ -4,13 +4,13 @@ const sha1 = require('sha1');
 const {getUserDataAsync, parseXMLData, formatJsData} = require('../utils/tools');
 const template = require('./template');
 const handleResponse = require('./handleResponse');
+const {token} = require('../config/index');
 
 module.exports = () => {
     return async (req, res) => {
         //console.log(req.query);
         //微信服务器发送过来的请求参数
         const {signature, echostr, timestamp, nonce} = req.query;
-        const token = 'dabaiya1128';
 
         //通过微信签名算法加密出来微信签名
         const sha1Sorted = sha1([token, timestamp, nonce].sort().join(''));

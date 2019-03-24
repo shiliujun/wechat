@@ -1,5 +1,7 @@
 /*处理用户发送的请求，定义响应的数据*/
 
+const {url} = require('../config/index');
+
 module.exports = (userData) => {
     let options = {
         toUserName: userData.FromUserName,
@@ -15,7 +17,7 @@ module.exports = (userData) => {
             console.log(userData.Content)
             options.content = '来钢枪啊！\n 倒地的那种！';
         } else if (userData.Content==='3') {
-            options.content ='<a herf="http://56c65a63.ngrok.io/search">语音识别</a>';
+            options.content ='<a href="${url}/search">语音识别</a>';
         }
     } else if (userData.MsgType === 'voice') {
         //将用户发送的语音消息， 返回语音识别结果给用户（需要开通才能生效）
