@@ -10,6 +10,8 @@ const app = express();
 app.set('views', 'views');
 app.set('view engine', 'ejs');
 
+app.use(express.static('images'));
+
 app.get('/search', async (req, res) => {
     const {ticket} = await fetchJsapiTicket();
     const noncestr = Math.random().toString().slice(2);
@@ -21,7 +23,7 @@ app.get('/search', async (req, res) => {
         `timestamp=${timestamp}`
     ]
     const signature = sha1(arr.sort().join('&'));
-    res.render('search', {noncestr,timestamp,signature,appId});
+    res.render('search', {noncestr,timestamp,signature,appId,url});
 
 })
 //调用中间件封装的函数，调用可以传参(扩展性强）

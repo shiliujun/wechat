@@ -56,6 +56,28 @@
                                             <p>电影评分：${curr.rating.average}</p>
                                             </li>`
                                     }, '')
+                                    //设置分享链接的内容
+                                    wx.updateAppMessageShareData({
+                                        title: subjects[0].title, // 分享标题
+                                        desc: '电影评分' + subjects[0].rating.average, // 分享描述
+                                        link: '<%= url %>/search>', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                                        imgUrl: '<%= url %>/3.jpg>', // 分享图标
+                                        success: function () {
+                                            alert('分享成功');
+                                        },
+                                        error: function () {
+                                            alert('分享失败');
+                                        }
+                                    })
+                                    wx.updateTimelineShareData({
+                                        title: subjects[0].title, // 分享标题
+                                        link: '<%= url %>/search>', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                                        imgUrl: '<%= url %>/3.jpg>', // 分享图标
+                                        success: function () {
+                                            // 设置成功
+                                        }
+                                    })
+
                                     $('#list').html(html);
                                 })
                             }
